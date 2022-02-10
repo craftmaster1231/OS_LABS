@@ -46,7 +46,7 @@ int main() {
 	if(retc1 == 0)
 		puts("Routine fun1 started working");
 	else {
-		perror("Failed to start fun1 routine.");
+		printf("Failed to start fun1 routine. %s\n", strerror(retc1));
 		return 1;
 	}
 	
@@ -54,8 +54,14 @@ int main() {
 	if(retc2 == 0) 
 		puts("Routine fun2 started working");
 	else {
-		perror("Failed to start fun2 routine.");
-		pthread_join(t1, NULL);
+		printf("Failed to start fun2 routine.%s\n", strerror(retc1));
+		arg1.flag = 0;
+		int join_retc = pthread_join(t1 , NULL);
+		if(join_retc == 0)
+			puts("Routine fun1 stopped working");
+		else
+			printf("Failed to join routine fun1. %s", strerror(join_retc));
+		puts("Main thread ending working");
 		return 1;
 	}
 	puts("Press enter to stop two threads.");
@@ -69,6 +75,7 @@ int main() {
 		puts("Routine fun1 ended working.");
        	else {
 		printf("Failed to join fun1 routine. %s\n", strerror(retc1));	
+		puts("Main thread ending working");
 		return 1;
 	}
 	ret_t* ret2;
@@ -77,12 +84,14 @@ int main() {
 		puts("Routine fun2 ended working.");
 	else {
 		printf("Failed to join fun2 routine. %s\n", strerror(retc2));
+		puts("Main thread ending working");
 		return 1;
 	}
 	if(*ret1 == OK && *ret2 == OK)
 		puts("Both threads returned OK code.");
 	else {
 		puts("Error occured! Not all threads returned OK code.\n");
+		puts("Main thread ending working");
 		return 1;
 	}
 	puts("Main thread ending working");
